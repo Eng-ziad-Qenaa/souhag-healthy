@@ -1,0 +1,16 @@
+{
+  "name": "صحة سوهاج",
+  "short_name": "صحة سوهاج",
+  "description": "منصة طبية لأهل سوهاج - احجز دكتور وصيدلية",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0ea5e9",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2966/2966486.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
