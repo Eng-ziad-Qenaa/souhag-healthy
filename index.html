@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>صحة سوهاج - صيدلية إسلام فتحي</title>
+<style>
+body{background:#0f172a;color:white;font-family:Arial;text-align:center;padding:15px;margin:0}
+.header{background:#16a34a;padding:20px;border-radius:0 0 20px 20px}
+.header h1{margin:0;font-size:26px}
+.box{background:#1e293b;padding:18px;border-radius:15px;margin-top:15px;text-align:right}
+select,input,textarea{width:100%;padding:13px;margin:8px 0;border-radius:10px;border:none;background:#334155;color:white;font-size:16px;box-sizing:border-box}
+button{width:100%;padding:15px;background:#16a34a;color:white;border:none;border-radius:12px;font-size:18px;font-weight:bold;margin-top:10px}
+.doc{background:#020617;padding:12px;border-radius:12px;margin-top:10px}
+.doc b{color:#4ade80}
+.small{font-size:13px;color:#94a3b8}
+.tag{background:#22c55e;color:white;padding:4px 10px;border-radius:20px;font-size:12px}
+.tag2{background:#f59e0b;color:white;padding:4px 10px;border-radius:20px;font-size:12px}
+.specBtn{background:#334155;padding:8px 12px;border-radius:20px;border:none;color:white;margin:3px}
+.specBtn.active{background:#16a34a}
+.tabBtn{width:32%;background:#334155;font-size:14px;padding:12px}
+.tabBtn.active{background:#16a34a}
+.hidden{display:none}
+.myPage{background:#020617;padding:15px;border-radius:15px;margin-top:10px;border:2px solid #16a34a}
+.myPageDoc{border-color:#2563eb}
+.myPagePh{border-color:#f59e0b}
+.chat{background:#020617;padding:12px;border-radius:12px;margin-top:10px;text-align:right;max-height:300px;overflow-y:auto}
+.msgP{background:#16a34a;padding:10px;border-radius:12px;margin:8px 0}
+.msgD{background:#2563eb;padding:10px;border-radius:12px;margin:8px 0}
+.msgR{background:#f59e0b;padding:10px;border-radius:12px;margin:8px 0;font-weight:bold}
+.msgPh{background:#9333ea;padding:10px;border-radius:12px;margin:8px 0}
+</style>
+</head>
+<body>
+
+<div class="header">
+<h1>🩺 صحة سوهاج</h1>
+<p>مريض - دكتور - صيدلية إسلام فتحي</p>
+</div>
+
+<div style="margin-top:15px;display:flex;justify-content:space-between;gap:5px">
+<button class="tabBtn active" id="btnP" onclick="showTab('patient')">مريض 🤒</button>
+<button class="tabBtn" id="btnD" onclick="showTab('doctor')">دكتور 👨‍⚕️</button>
+<button class="tabBtn" id="btnPh" onclick="showTab('pharm')">صيدلية 💊</button>
+</div>
+
+<!-- المريض -->
+<div class="box" id="patientBox">
+<div id="loginPart">
+<h3>دخول المريض 📝</h3>
+<input id="pName" placeholder="اسمك">
+<input id="pPhone" placeholder="رقم الواتساب - ده حسابك">
+<input id="pAge" type="number" placeholder="السن">
+<button onclick="loginPatient()">ادخل صفحتي ✅</button>
+</div>
+<div id="myPatientPage" class="hidden">
+<div class="myPage"><h2 id="welcomeName"></h2><p class="small" id="myInfo"></p><button style="background:#ef4444;width:auto;padding:8px 15px;font-size:14px" onclick="logoutP()">خروج 🚪</button></div>
+<h3>💬 شاتي مع الدكتور - محفوظ</h3>
+<div class="chat" id="patientChat"></div>
+<h3>اطلب كشف جديد</h3>
+<div>
+<button class="specBtn active" onclick="filterDocs('باطنة',this)">باطنة</button>
+<button class="specBtn" onclick="filterDocs('أطفال',this)">أطفال</button>
+<button class="specBtn" onclick="filterDocs('جلدية',this)">جلدية</button>
+<button class="specBtn" onclick="filterDocs('عظام',this)">عظام</button>
+<button class="specBtn" onclick="filterDocs('أسنان',this)">أسنان</button>
+<button class="specBtn" onclick="filterDocs('عيون',this)">عيون</button>
+</div>
+<h3 id="title">دكاترة الباطنة</h3>
+<div id="docs"></div>
+<textarea id="sym" rows="3" placeholder="اكتب حاسس بايه..."></textarea>
+<button onclick="send()">ابعت رسالة للدكتور 📩</button>
+<h3>روشتاتي المحفوظة 💊</h3>
+<div id="myRosh"></div>
+<h3>اطلب الدوا من الصيدلية</h3>
+<select id="phSelect"></select>
+<textarea id="rosh" rows="2" placeholder="اكتب الدوا اللي في روشتتك..."></textarea>
+<button style="background:#f59e0b" onclick="orderPharm()">اطلب الدوا 🛵</button>
+<p id="phOrderMsg" class="small"></p>
+<h3>💬 شاتي مع الصيدلية - محفوظ</h3>
+<div class="chat" id="patientPhChat"></div>
+</div>
+</div>
+
+<!-- الدكتور -->
+<div class="box hidden" id="doctorBox">
+<div id="loginDocPart">
+<h3>دخول الدكتور 👨‍⚕️</h3>
+<input id="dName" placeholder="اسم الدكتور">
+<input id="dPhone" placeholder="رقم الواتساب">
+<select id="dSpec"><option>باطنة</option><option>أطفال</option><option>جلدية</option><option>عظام</option><option>أسنان</option><option>عيون</option></select>
+<input id="dPlace" placeholder="مكان العيادة">
+<button style="background:#2563eb" onclick="loginDoctor()">ادخل صفحتي ✅</button>
+</div>
+<div id="myDoctorPage" class="hidden">
+<div class="myPage myPageDoc"><h2 id="welcomeDoc"></h2><p class="small" id="docInfo"></p><button style="background:#ef4444;width:auto;padding:8px 15px;font-size:14px" onclick="logoutD()">خروج 🚪</button></div>
+<h3>💬 شاتي مع مرضاي - محفوظ</h3>
+<div class="chat" id="doctorChat"></div>
+<h3>رد + روشتة</h3>
+<textarea id="docReply" rows="2" placeholder="اكتب ردك..."></textarea>
+<input id="docRosh" placeholder="اكتب الروشتة هنا">
+<button style="background:#2563eb" onclick="replyDoc()">ابعت الرد + الروشتة 📩</button>
+<p id="docReplyMsg" class="small"></p>
+</div>
+</div>
+
+<!-- الصيدلية -->
+<div class="box hidden" id="pharmBox">
+<div id="loginPhPart">
+<h3>دخول الصيدلية 💊</h3>
+<input id="phName" placeholder="اسم الصيدلية">
+<input id="phPhone" placeholder="رقم الواتساب">
+<input id="phPlace" placeholder="عنوان الصيدلية">
+<select id="phDel"><option>فيه توصيل للبيت 🛵</option><option>استلام من الصيدلية فقط</option></select>
+<button style="background:#f59e0b" onclick="loginPharm()">ادخل صفحة الصيدلية ✅</button>
+<p class="small">عشان تدخل كصيدلية إسلام فتحي اكتب:<br><b>الاسم: صيدلية إسلام فتحي</b><br><b>الرقم: 01111111111</b></p>
+</div>
+<div id="myPharmPage" class="hidden">
+<div class="myPage myPagePh"><h2 id="welcomePh"></h2><p class="small" id="phInfo"></p><button style="background:#ef4444;width:auto;padding:8px 15px;font-size:14px" onclick="logoutPh()">خروج 🚪</button></div>
+<h3>📦 اوردراتي انا بس - محفوظة</h3>
+<div id="myPhOrders"></div>
+<p id="noPhOrder" class="small">لسه مفيش اوردرات</p>
+<h3>💬 شاتي مع المرضى - محفوظ</h3>
+<div class="chat" id="pharmChat"></div>
+<h3>رد على المريض</h3>
+<textarea id="phReply" rows="2" placeholder="اكتب ردك - مثال: الدوا جاهز وهيوصلك بعد ساعة"></textarea>
+<button style="background:#9333ea" onclick="replyPharm()">ابعت الرد 📩</button>
+<p id="phReplyMsg" class="small"></p>
+<h3>كل الصيدليات</h3>
+<div id="phList"></div>
+</div>
+</div>
+
+<p class="small">تنبيه: التشخيص والعلاج مسؤولية الدكتور فقط.</p>
+
+<script>
+let saved = JSON.parse(localStorage.getItem('sohagHealth2')||'{"patients":{},"doctorsAcc":{},"pharmAcc":{},"chats":{},"phChats":{},"phOrders":{}}');
+let patients=saved.patients||{};
+let doctorsAcc=saved.doctorsAcc||{};
+let pharmAcc=saved.pharmAcc||{};
+let chats=saved.chats||{};
+let phChats=saved.phChats||{};
+let phOrders=saved.phOrders||{};
+
+let doctors={
+"باطنة":[{n:"د. أحمد محمود",a:"متاح - سوهاج",phone:"010111"}],
+"أطفال":[{n:"د. منى حسن",a:"متاحة - سوهاج",phone:"010222"}],
+"جلدية":[{n:"د. كريم سامي",a:"متاح - سوهاج",phone:"010333"}],
+"عظام":[{n:"د. محمود عادل",a:"متاح - سوهاج",phone:"010444"}],
+"أسنان":[{n:"د. نور الهدى",a:"متاحة - سوهاج",phone:"010555"}],
+"عيون":[{n:"د. يوسف أحمد",a:"متاح - سوهاج",phone:"010666"}]
+};
+
+// صيدلية إسلام فتحي - متسجلة جاهزة
+let pharmaciesList=[
+{name:"صيدلية إسلام فتحي",place:"نجع حمادي - قنا",phone:"01111111111",del:"فيه توصيل للبيت 🛵"},
+{name:"صيدلية النور",place:"سوهاج - شارع الجمهورية",phone:"011111",del:"توصيل 🛵"},
+{name:"صيدلية الشفاء",place:"سوهاج - شارع 15",phone:"011222",del:"توصيل 🛵"}
+];
+pharmaciesList.forEach(p=>{ if(!pharmAcc[p.phone]) pharmAcc[p.phone]={name:p.name,place:p.place,phone:p.phone,del:p.del}; });
+for(let s in doctors){ doctors[s].forEach(d=>{ if(!doctorsAcc[d.phone]) doctorsAcc[d.phone]={name:d.n,spec:s,place:d.a,phone:d.phone}; }); }
+
+let current="باطنة";
+let currentPatient=null, currentDoctor=null, currentPharm=null;
+function saveAll(){ localStorage.setItem('sohagHealth2', JSON.stringify({patients,doctorsAcc,pharmAcc,chats,phChats,phOrders})); }
+function showTab(t){
+document.getElementById('patientBox').classList.toggle('hidden',t!=='patient');
+document.getElementById('doctorBox').classList.toggle('hidden',t!=='doctor');
+document.getElementById('pharmBox').classList.toggle('hidden',t!=='pharm');
+document.getElementById('btnP').classList.toggle('active',t==='patient');
+document.getElementById('btnD').classList.toggle('active',t==='doctor');
+document.getElementById('btnPh').classList.toggle('active',t==='pharm');
+}
+function render(){
+document.getElementById('title').innerHTML="دكاترة "+current;
+document.getElementById('docs').innerHTML=doctors[current].map(d=>`<div class="doc"><div><b>${d.n} - ${current}</b><br><span class="small">${d.a}</span></div><span class="tag">متاح</span></div>`).join('');
+document.getElementById('phSelect').innerHTML=Object.values(pharmAcc).map(p=>`<option value="${p.phone}">${p.name} - ${p.place}</option>`).join('');
+document.getElementById('phList').innerHTML=Object.values(pharmAcc).map(p=>`<div class="doc"><div><b>${p.name}</b><br><span class="small">${p.place} - ${p.del}</span></div><span class="tag2">متاحة</span></div>`).join('');
+}
+function filterDocs(s,btn){ current=s; document.querySelectorAll('.specBtn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); render(); }
+function loginPatient(){
+let name=document.getElementById('pName').value;
+let phone=document.getElementById('pPhone').value;
+let age=document.getElementById('pAge').value;
+if(!name||!phone){alert('اكتب اسمك ورقمك');return;}
+if(!patients[phone]) patients[phone]={name:name,age:age,phone:phone};
+currentPatient=patients[phone];
+document.getElementById('loginPart').classList.add('hidden');
+document.getElementById('myPatientPage').classList.remove('hidden');
+document.getElementById('welcomeName').innerHTML="اهلا بيك يا "+currentPatient.name+" 👋";
+document.getElementById('myInfo').innerHTML="صفحتك الخاصة - رقمك: "+currentPatient.phone;
+renderAll(); saveAll();
+}
+function logoutP(){ currentPatient=null; document.getElementById('loginPart').classList.remove('hidden'); document.getElementById('myPatientPage').classList.add('hidden'); }
+function renderAll(){
+if(currentPatient){
+let all=[]; for(let k in chats){ if(k.startsWith(currentPatient.phone+"_")) all=all.concat(chats[k]); }
+document.getElementById('patientChat').innerHTML=all.length? all.map(m=> m.type=='p'? `<div class="msgP">🤒 انت: ${m.text}</div>` : m.type=='d'? `<div class="msgD">👨‍⚕️ الدكتور: ${m.text}</div>` : `<div class="msgR">💊 روشتة محفوظة: ${m.text}</div>`).join('') : "<p class='small'>لسه مفيش كلام مع الدكتور</p>";
+let rosh=all.filter(m=>m.type=='r');
+document.getElementById('myRosh').innerHTML=rosh.length? rosh.map(m=>`<div class="doc"><b>💊 ${m.text}</b><br><span class="small">محفوظة - مش بتتمسح</span></div>`).join('') : "<p class='small'>لسه مفيش روشتة</p>";
+let pch=[]; for(let k in phChats){ if(k.startsWith(currentPatient.phone+"_")) pch=pch.concat(phChats[k]); }
+document.getElementById('patientPhChat').innerHTML=pch.length? pch.map(m=> m.type=='p'? `<div class="msgP">🤒 انت: ${m.text}</div>` : `<div class="msgPh">💊 الصيدلية: ${m.text}</div>`).join('') : "<p class='small'>لسه مفيش كلام مع الصيدلية</p>";
+}
+if(currentDoctor){
+let all=[]; for(let k in chats){ if(k.endsWith("_"+currentDoctor.spec)) all=all.concat(chats[k]); }
+document.getElementById('doctorChat').innerHTML=all.length? all.map(m=> m.type=='p'? `<div class="msgP">🤒 المريض (${m.patient}): ${m.text}</div>` : m.type=='d'? `<div class="msgD">👨‍⚕️ انت: ${m.text}</div>` : `<div class="msgR">💊 روشتة محفوظة: ${m.text}</div>`).join('') : "<p class='small'>لسه مفيش مرضى</p>";
+}
+if(currentPharm){
+let orders=phOrders[currentPharm.phone]||[];
+document.getElementById('myPhOrders').innerHTML=orders.length? orders.map(o=>`<div class="doc"><b>📦 ${o.text}</b><br><span class="small">من: ${o.patient} - محفوظ - الحالة: ${o.status}</span></div>`).join('') : "";
+document.getElementById('noPhOrder').style.display=orders.length?"none":"block";
+let all=[]; for(let k in phChats){ if(k.endsWith("_"+currentPharm.phone)) all=all.concat(phChats[k]); }
+document.getElementById('pharmChat').innerHTML=all.length? all.map(m=> m.type=='p'? `<div class="msgP">🤒 المريض (${m.patient}): ${m.text}</div>` : `<div class="msgPh">💊 انت: ${m.text}</div>`).join('') : "<p class='small'>لسه مفيش مرضى بعتولك</p>";
+}
+}
+function send(){
+if(!currentPatient) return;
+let s=document.getElementById('sym').value;
+if(!s){alert('اكتب حاسس بايه');return;}
+let key=currentPatient.phone+"_"+current;
+if(!chats[key]) chats[key]=[];
+chats[key].push({type:'p',text:"كشف "+current+" - "+s,patient:currentPatient.name});
+document.getElementById('sym').value="";
+renderAll(); saveAll();
+}
+function orderPharm(){
+if(!currentPatient) return;
+let phPhone=document.getElementById('phSelect').value;
+let phName=pharmAcc[phPhone]? pharmAcc[phPhone].name : "صيدلية";
+let t=document.getElementById('rosh').value||"روشتة";
+if(!phOrders[phPhone]) phOrders[phPhone]=[];
+phOrders[phPhone].push({text:t+" - لصيدلية "+phName,patient:currentPatient.name,status:"جديد - محفوظ"});
+let key=currentPatient.phone+"_"+phPhone;
+if(!phChats[key]) phChats[key]=[];
+phChats[key].push({type:'p',text:"عايز اطلب الدوا ده: "+t,patient:currentPatient.name});
+document.getElementById('phOrderMsg').innerHTML="✅ اتبعت لصيدلية "+phName+" واتحفظ في صفحتها وصفحتك";
+renderAll(); saveAll();
+}
+function loginDoctor(){
+let n=document.getElementById('dName').value;
+let phone=document.getElementById('dPhone').value;
+let spec=document.getElementById('dSpec').value;
+let place=document.getElementById('dPlace').value;
+if(!n||!phone){alert('اكتب اسمك ورقمك');return;}
+if(!doctorsAcc[phone]){ doctorsAcc[phone]={name:n,spec:spec,place:place,phone:phone}; if(!doctors[spec]) doctors[spec]=[]; doctors[spec].push({n:n,a:"متاح - "+place,phone:phone}); }
+currentDoctor=doctorsAcc[phone];
+document.getElementById('loginDocPart').classList.add('hidden');
+document.getElementById('myDoctorPage').classList.remove('hidden');
+document.getElementById('welcomeDoc').innerHTML="اهلا بيك يا "+currentDoctor.name+" 👨‍⚕️";
+document.getElementById('docInfo').innerHTML="صفحتك - تخصصك: "+currentDoctor.spec;
+renderAll(); saveAll();
+}
+function logoutD(){ currentDoctor=null; document.getElementById('loginDocPart').classList.remove('hidden'); document.getElementById('myDoctorPage').classList.add('hidden'); }
+function replyDoc(){
+if(!currentDoctor) return;
+let reply=document.getElementById('docReply').value;
+let rosh=document.getElementById('docRosh').value;
+let keys=Object.keys(chats).filter(k=>k.endsWith("_"+currentDoctor.spec));
+if(keys.length==0){alert('لسه مفيش مريض');return;}
+let lastKey=keys[keys.length-1];
+if(reply) chats[lastKey].push({type:'d',text:reply,patient:currentDoctor.name});
+if(rosh) chats[lastKey].push({type:'r',text:rosh,patient:currentDoctor.name});
+document.getElementById('docReply').value=""; document.getElementById('docRosh').value="";
+document.getElementById('docReplyMsg').innerHTML="✅ اتبعت واتحفظ";
+renderAll(); saveAll();
+}
+function loginPharm(){
+let n=document.getElementById('phName').value;
+let phone=document.getElementById('phPhone').value;
+let place=document.getElementById('phPlace').value;
+let del=document.getElementById('phDel').value;
+if(!n||!phone){alert('اكتب اسم الصيدلية ورقمها');return;}
+if(!pharmAcc[phone]) pharmAcc[phone]={name:n,place:place,phone:phone,del:del};
+currentPharm=pharmAcc[phone];
+document.getElementById('loginPhPart').classList.add('hidden');
+document.getElementById('myPharmPage').classList.remove('hidden');
+document.getElementById('welcomePh').innerHTML="اهلا بيك يا "+currentPharm.name+" 💊";
+document.getElementById('phInfo').innerHTML="صفحتك الخاصة - عنوانك: "+currentPharm.place+" - "+currentPharm.del;
+render(); renderAll(); saveAll();
+}
+function logoutPh(){ currentPharm=null; document.getElementById('loginPhPart').classList.remove('hidden'); document.getElementById('myPharmPage').classList.add('hidden'); }
+function replyPharm(){
+if(!currentPharm) return;
+let txt=document.getElementById('phReply').value;
+if(!txt){alert('اكتب ردك');return;}
+let keys=Object.keys(phChats).filter(k=>k.endsWith("_"+currentPharm.phone));
+if(keys.length==0){alert('لسه مفيش مريض');return;}
+let lastKey=keys[keys.length-1];
+phChats[lastKey].push({type:'ph',text:txt,patient:currentPharm.name});
+document.getElementById('phReply').value="";
+document.getElementById('phReplyMsg').innerHTML="✅ اتبعت واتحفظ";
+renderAll(); saveAll();
+}
+render();
+</script>
+</body>
+</html>
